@@ -1,5 +1,15 @@
 # MODELO_RNN_NYSE
-Repositorio para un pipeline end-to-end de predicción de tendencias bursátiles con datos de Yahoo Finance.
+End-to-end RNN pipeline for NYSE stock trend prediction using historical price data and the S&P 500 index from Yahoo Finance.
+
+## Tech stack
+
+- **Language:** Python  
+- **Core libraries:** Pandas, NumPy, Scikit-learn, TensorFlow/Keras  
+- **Data source:** Yahoo Finance (yfinance)  
+- **Visualization:** Matplotlib, Seaborn  
+- **Orchestration:** CLI scripts + `pipeline.py`  
+- **Outputs:** Trained model (`.h5`), training plots, confusion matrix, classification report
+
 
 ## Visión general del flujo
 1. **Descarga de datos de acciones** (`01_download_stocks.py`): baja históricos de cientos de tickers NYSE y crea `data/raw/stocks` (reintentos y creación de carpetas incluidas).
@@ -63,18 +73,20 @@ Al ejecutar los scripts se crean carpetas locales bajo `data/`:
 
 ## Entrenamiento y evaluación
 ### `train_model.py`
-- **CLI configurable** para ajustar hiperparámetros y rango temporal sin tocar código: 
+
+- CLI configurable para ajustar hiperparámetros y rango temporal sin tocar código:
   - `--epochs`, `--batch-size`, `--n-steps` para la configuración de las secuencias y del entrenamiento.
   - `--start-date` y `--end-date` para acotar el historial usado.
-  - `--early-stopping-patience` y `--reduce-lr-patience` para callbacks.
-- **Flujo interno:**
-  1) Llama a `prepare_training_data` de `model_data.py` con el rango y `n_steps` solicitados.
-  2) Construye el modelo vía `build_model` de `model_definition.py`, respetando el número de compañías y clases detectadas.
-  3) Ajusta el modelo con callbacks (early stopping y reducción de LR), evalúa en test y guarda:
+
+- Flujo interno:
+  1. Llama a `prepare_training_data` de `model_data.py` con el rango y `n_steps` solicitados.
+  2. Construye el modelo vía `build_rnn_model` de `model_definition.py`, respetando el número de compañías y clases detectadas.
+  3. Ajusta el modelo con callbacks (early stopping y reducción de LR), evalúa en test y guarda:
      - Modelo `.h5` y pesos.
      - Gráficas de pérdida/precisión.
      - Matriz de confusión y reporte de clasificación.
-- **Salida:** todos los artefactos se escriben en `data/models` con nombres fechados para mantener el histórico de experimentos.
+
+- Salida: todos los artefactos se escriben en `data/models`.
 
 ## Entrenamiento manual
 Si prefieres entrenar de forma aislada tras generar los CSV fusionados:
